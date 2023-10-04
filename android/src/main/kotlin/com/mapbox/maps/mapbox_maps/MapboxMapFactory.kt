@@ -1,10 +1,7 @@
 package com.mapbox.maps.mapbox_maps
 
 import android.content.Context
-import androidx.startup.AppInitializer
-import com.mapbox.common.*
 import com.mapbox.maps.*
-import com.mapbox.maps.loader.MapboxMapsInitializer
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
@@ -130,8 +127,6 @@ class MapboxMapFactory(
       textureView = textureView,
       styleUri = styleUri
     )
-
-    AppInitializer.getInstance(context).initializeComponent(MapboxMapsInitializer::class.java)
 
     val eventTypes = params["eventTypes"] as? List<String> ?: listOf()
     return MapboxMapController(
