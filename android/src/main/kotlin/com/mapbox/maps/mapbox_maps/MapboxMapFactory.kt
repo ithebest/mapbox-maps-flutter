@@ -1,8 +1,10 @@
 package com.mapbox.maps.mapbox_maps
 
 import android.content.Context
+import androidx.startup.AppInitializer
 import com.mapbox.common.*
 import com.mapbox.maps.*
+import com.mapbox.maps.loader.MapboxMapsInitializer
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
@@ -18,6 +20,9 @@ class MapboxMapFactory(
     if (context == null) {
       throw RuntimeException("Context is null, can't create MapView!")
     }
+
+    AppInitializer.getInstance(context).initializeComponent(MapboxMapsInitializer::class.java)
+
     val params = args as Map<String, Any>
     val resourceOptionsBuilder = ResourceOptions.Builder().applyDefaultParams(context)
     val mapOptionsBuilder = MapOptions.Builder().applyDefaultParams(context)

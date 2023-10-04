@@ -4,10 +4,8 @@ import android.content.Context
 import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.startup.AppInitializer
 import com.mapbox.common.*
 import com.mapbox.maps.*
-import com.mapbox.maps.loader.MapboxMapsInitializer
 import com.mapbox.maps.mapbox_maps.annotation.AnnotationController
 import com.mapbox.maps.pigeons.FLTMapInterfaces
 import com.mapbox.maps.pigeons.FLTSettings
@@ -47,7 +45,6 @@ class MapboxMapController(
   private val proxyBinaryMessenger = ProxyBinaryMessenger(messenger, "/map_$channelSuffix")
 
   init {
-    AppInitializer.getInstance(context).initializeComponent(MapboxMapsInitializer::class.java)
     changeUserAgent(pluginVersion)
     lifecycleProvider.getLifecycle()?.addObserver(this)
     FLTMapInterfaces.StyleManager.setup(proxyBinaryMessenger, styleController)
