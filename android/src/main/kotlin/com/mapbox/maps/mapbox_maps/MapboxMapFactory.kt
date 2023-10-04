@@ -21,8 +21,6 @@ class MapboxMapFactory(
       throw RuntimeException("Context is null, can't create MapView!")
     }
 
-    AppInitializer.getInstance(context).initializeComponent(MapboxMapsInitializer::class.java)
-
     val params = args as Map<String, Any>
     val resourceOptionsBuilder = ResourceOptions.Builder().applyDefaultParams(context)
     val mapOptionsBuilder = MapOptions.Builder().applyDefaultParams(context)
@@ -132,6 +130,9 @@ class MapboxMapFactory(
       textureView = textureView,
       styleUri = styleUri
     )
+
+    AppInitializer.getInstance(context).initializeComponent(MapboxMapsInitializer::class.java)
+
     val eventTypes = params["eventTypes"] as? List<String> ?: listOf()
     return MapboxMapController(
       context,
