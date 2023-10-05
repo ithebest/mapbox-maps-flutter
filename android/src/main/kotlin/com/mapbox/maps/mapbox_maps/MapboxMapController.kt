@@ -3,6 +3,7 @@ package com.mapbox.maps.mapbox_maps
 import android.content.Context
 import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.LifecycleOwner
 import androidx.startup.AppInitializer
 import com.mapbox.common.*
@@ -56,7 +57,10 @@ class MapboxMapController(
     FLTMapInterfaces._MapInterface.setup(proxyBinaryMessenger, mapInterfaceController)
     FLTMapInterfaces._AnimationManager.setup(proxyBinaryMessenger, animationController)
     annotationController.setup(proxyBinaryMessenger)
-    FLTSettings.LocationComponentSettingsInterface.setup(proxyBinaryMessenger, locationComponentController)
+    FLTSettings.LocationComponentSettingsInterface.setup(
+      proxyBinaryMessenger,
+      locationComponentController
+    )
     FLTSettings.LogoSettingsInterface.setup(proxyBinaryMessenger, logoController)
     FLTSettings.GesturesSettingsInterface.setup(proxyBinaryMessenger, gestureController)
     FLTSettings.AttributionSettingsInterface.setup(proxyBinaryMessenger, attributionController)
@@ -64,6 +68,22 @@ class MapboxMapController(
     FLTSettings.CompassSettingsInterface.setup(proxyBinaryMessenger, compassController)
     methodChannel = MethodChannel(proxyBinaryMessenger, "plugins.flutter.io")
     methodChannel.setMethodCallHandler(this)
+
+    /*
+     * Setting lifecycle owner to the map view
+     */
+    mapView.let {
+
+      val lifecycle = lifecycleProvider.getLifecycle()
+
+      lifecycle?.let { l ->
+        ViewTreeLifecycleOwner.set(it, LifecycleOwner {
+          l
+        })
+      }
+
+    }
+
     mapboxMap.subscribe(
       { event ->
         methodChannel.invokeMethod(getEventMethodName(event.type), event.data.toJson())
@@ -117,20 +137,25 @@ class MapboxMapController(
         )
         result.success(null)
       }
+
       "annotation#create_manager" -> {
         annotationController.handleCreateManager(call, result)
       }
+
       "annotation#remove_manager" -> {
         annotationController.handleRemoveManager(call, result)
       }
+
       "gesture#add_listeners" -> {
         gestureController.addListeners(proxyBinaryMessenger)
         result.success(null)
       }
+
       "gesture#remove_listeners" -> {
         gestureController.removeListeners()
         result.success(null)
       }
+
       else -> {
         result.notImplemented()
       }
@@ -141,7 +166,8 @@ class MapboxMapController(
     HttpServiceFactory.getInstance().setInterceptor(
       object : HttpServiceInterceptorInterface {
         override fun onRequest(request: HttpRequest): HttpRequest {
-          request.headers[HttpHeaders.USER_AGENT] = "${request.headers[HttpHeaders.USER_AGENT]} Flutter Plugin/$version"
+          request.headers[HttpHeaders.USER_AGENT] =
+            "${request.headers[HttpHeaders.USER_AGENT]} Flutter Plugin/$version"
           return request
         }
 

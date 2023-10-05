@@ -1,12 +1,10 @@
 package com.mapbox.maps.mapbox_maps
 
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter
-import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -48,9 +46,7 @@ class MapboxMapsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    val reference = binding.lifecycle as HiddenLifecycleReference
-    lifecycle = reference.lifecycle
-//    lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
+    lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
@@ -58,7 +54,6 @@ class MapboxMapsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
   }
 
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-//    lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
     onAttachedToActivity(binding)
   }
 
