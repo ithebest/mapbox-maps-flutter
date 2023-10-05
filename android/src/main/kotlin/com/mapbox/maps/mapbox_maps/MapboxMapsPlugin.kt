@@ -54,7 +54,7 @@ class MapboxMapsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
   }
 
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-    onAttachedToActivity(binding)
+    lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
   }
 
   override fun onDetachedFromActivity() {

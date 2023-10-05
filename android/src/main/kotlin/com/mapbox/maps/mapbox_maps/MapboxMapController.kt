@@ -5,10 +5,8 @@ import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.LifecycleOwner
-import androidx.startup.AppInitializer
 import com.mapbox.common.*
 import com.mapbox.maps.*
-import com.mapbox.maps.loader.MapboxMapsInitializer
 import com.mapbox.maps.mapbox_maps.annotation.AnnotationController
 import com.mapbox.maps.pigeons.FLTMapInterfaces
 import com.mapbox.maps.pigeons.FLTSettings
@@ -48,7 +46,6 @@ class MapboxMapController(
   private val proxyBinaryMessenger = ProxyBinaryMessenger(messenger, "/map_$channelSuffix")
 
   init {
-    AppInitializer.getInstance(context).initializeComponent(MapboxMapsInitializer::class.java)
     changeUserAgent(pluginVersion)
     lifecycleProvider.getLifecycle()?.addObserver(this)
     FLTMapInterfaces.StyleManager.setup(proxyBinaryMessenger, styleController)
@@ -71,17 +68,17 @@ class MapboxMapController(
 
     /*
      * Setting lifecycle owner to the map view
+     * To fix the issue
+     * ---> IllegalStateException: Please ensure that the hosting activity/fragment
+     *      is a valid LifecycleOwner #259 - Reported By:- @amias-samir
      */
     mapView.let {
-
       val lifecycle = lifecycleProvider.getLifecycle()
-
       lifecycle?.let { l ->
-        ViewTreeLifecycleOwner.set(it, LifecycleOwner {
+        ViewTreeLifecycleOwner.set(it) {
           l
-        })
+        }
       }
-
     }
 
     mapboxMap.subscribe(
